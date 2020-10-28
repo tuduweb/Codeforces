@@ -1,6 +1,6 @@
 ## Marketing Scheme
 
-https://codeforces.com/contest/1437
+https://codeforces.com/contest/1437/problem/A
 
 ![ERROR](./static/A-error.jpg)
 
