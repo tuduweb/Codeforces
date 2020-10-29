@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#define INF 1e9
+//int v[200000];//时间上无差别
 
 int main()
 {
@@ -16,8 +16,7 @@ int main()
         int setSize;
         cin >> setSize;
 
-        vector<int> v(setSize + 1);
-		v[setSize] = INF;
+        vector<int> v(setSize);
 
         for(int i = 0; i < setSize; ++i)
             cin >> v[i];
@@ -26,38 +25,22 @@ int main()
         int level = 1;
         int currentSize = 1;
 		int nextSize = 0;
-        for(int i = 1; i <= setSize; ++i)
+        for(int i = 1; i < setSize; ++i)
         {
-
-            //cout << "[" << level <<  "] c:" << currentSize << " n:" << nextSize << " - "  << v[i-1] << "," << v[i] << endl;
-
-
 			if(v[i] > v[i - 1])
 			{
 				//顺序增加一个节点
 				nextSize++;
 			}else{
-			{
                 currentSize--;
                 if(currentSize > 0)
                     nextSize++;
                 else{
-                    //本层消耗殆尽
-                    if(currentSize == 0 && i < setSize)
-                    {
-                        level++;
-                        currentSize = nextSize;
-                        nextSize = 1;
-                    }
+                    level++;
+                    currentSize = nextSize;
+                    nextSize = 1;
                 }
-            }
-
-
-
-
 			}
-
-
         }
 
         cout << level << endl;
@@ -69,3 +52,8 @@ int main()
 
     return 0;
 }
+
+/**
+ * 第一次优化：  删除在setSize设立的边界
+ *              327ms -> 312ms
+ */
