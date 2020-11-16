@@ -1,94 +1,52 @@
 #include <iostream>
 #include <vector>
-
+#include<algorithm>
 
 using namespace std;
 
-/**
- * 贪心+二分查找找有限制条件的
- */
-int FindLIS(int* array, int length)
+int FindLIS_1116(int* array, int length)
 {
     if(length == 2)
         return 0;
-    vector<int > d(length);
+    int* d = new int[length];
     int bound = array[length - 1];
+
     int len = 0;
-    d[0] = 0;
-    for(int i = 1; i < length - 1; ++i)
-    {
-        if(array[i] < array[0] + i)
-            array[i] = 1e9;
-    }
+    d[0] = array[0];
 
     for(int i = 1; i < length - 1; ++i)
     {
-        //大于上边界,这个值可以直接忽略了
-        cout << i << "| d[len]=" << d[len] << " array[i]=" << array[i] <<" array[d[len]]=" << array[d[len]] << endl;
-
-        for(int j = 1; j <= len; ++j)
-            cout << array[d[j]] << " ";
-        cout << endl;
-
-        if(array[i] >= bound)
+        if(array[i] < array[0] || array[i] > bound)
             continue;
 
-        //cout << "go on" << endl;
-        
-        if(array[i] > array[d[len]] && (array[i] - array[d[len]] >= i - d[len]))
+        if(array[i] >= d[len])
         {
-            // if(array[i] < array[i - 1] + i)
-            //     continue;
-            //贪心,比上一个长度大一些,进位
-            d[++len] = i;
-        }else if(array[i] == array[d[len]]){
-            continue;
+            d[++len] = array[i];
         }else{
-            //小,那么满足尽可能小的情况,二分查找已经存储的“刚刚好”的位置
-            int l = 0, r = len, pos = 0;
-            while(l <= r)
-            {
-                int mid = (l + r) / 2;
-                if(array[d[mid]] - array[i] < 0)
-                {
-                    //还太大了,那么作为左边界
-                    pos = mid;
-                    l = mid + 1;
-                }else{
-                    //比较小了,那么作为右边界
-                    r = mid - 1;
-                }
-            }
-
-            //d[pos + 1] -> 0 全更新
-            
-            for(int j = pos + 1; j > 0; --j)
-            {
-                cout << "j = " << j << " array[d[j - 1]]=" <<array[d[j - 1]]  << endl;
-                if(array[i] - array[d[j - 1]] >= i - d[j - 1] && ( (j == pos + 1) || (array[i] - array[d[j]] < i - d[j])))
-                    d[j] = i;
-            }
-            
+            //查找更新位置
+            int j = upper_bound(d, d+len+1,array[i]) - d;
+            d[j] = array[i];
         }
+
     }
 
-    for(int i = 0; i < length; ++i)
-    {
-        cout << array[i] << " ";
-    }
+    // for(int i = len; i >= 0; --i)
+    // {
+    //     if(d[i] <= bound)
+    //     {
+    //         delete[] d;
+    //         return i;
+    //     }
+    // }
 
-    cout << "| lis:" << len << endl;
 
-    for(int i = 0; i < len + 1; ++i)
-    {
-        cout << array[d[i]] << " ";
-    }
-    cout << endl;
 
-    
+    delete[] d;
 
     return len;
+
 }
+
 
 int main()
 {
@@ -96,15 +54,13 @@ int main()
 
     cin >> n >> k;
 
-    //cout << n << k;
-
-    //需要判断k是否为0，为0则需要做一次比较
-
     vector<int > v(n + 2);
     vector<int > set(k + 2);
 
     for(int i = 0; i < n; i++)
+    {
         cin >> v[i + 1];
+    }
 
     v[0] = -1e9;
     v[n + 1] = 1e9;
@@ -112,35 +68,30 @@ int main()
     for(int i = 0; i < k; i++)
     {
         cin >> set[i + 1];
-        set[i+1];
     }
 
     set[0] = 0;
     set[k + 1] = n + 1;
 
-    // for(int i = 0; i < n; i++)
-    //     cout << vn[i] << " ";
-
-    // cout << endl;
-
-    // for(int i = 0; i < k; i++)
-    //     cout << vk[i] << " ";
-
-    // cout << endl;
-
-    //分割成k+2段,分别判断是否能成立 需要做几次运算
+    //分割成k+1段,分别判断是否能成立 需要做几次运算
     /**
      * Input leftB,rightB,V[array]
     */
     int ok = 0;
-
-    for(int i = 1; i < k + 1; ++i)
+    
+    //洗键入的数据,转换问题
+    for(int i = 1; i < n + 1; i++)
+    {
+        v[i] -= i;
+    }
+    
+    for(int i = 1; i <= k + 1; ++i)
     {
         //限制条件
-        if(v[set[i + 1]] - v[set[i]] >= set[i + 1] - set[i]) ok++;
+        if(v[set[i]] >= v[set[i-1]]) ok++;
         else break;
     }
-    if(ok != k)
+    if(ok != k+1)
         cout << "-1" << endl;
     else{
 
@@ -148,19 +99,16 @@ int main()
 
         for(int i = 0; i < k + 1; ++i)
         {
-            //cout << "[" << i << "]" ; 
-            for(int j = set[i]; j < set[i + 1] + 1; ++j)
-            {
-                //cout << v[j] << " ";
-            }
-            /**
-            //left set[i]
-            //right set[i+1] + 1
-            //array left->right
-            **/
-            minRep += set[i + 1] - 1 - set[i] - FindLIS(&v[set[i]], set[i + 1] + 1 - set[i]);
+            // cout << "[" << i << "]" ; 
+            // for(int j = set[i]; j < set[i + 1] + 1; ++j)
+            // {
+            //     cout << v[j] << " ";
+            // }
+            // cout << " " << endl;
 
-            //cout << " " << endl;
+            //每一段
+            minRep += (set[i + 1] - 1 - set[i]) - FindLIS_1116(&v[set[i]], set[i + 1] + 1 - set[i]);
+
         }
 
         cout << minRep << endl;
