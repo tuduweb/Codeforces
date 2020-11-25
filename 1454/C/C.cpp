@@ -1,3 +1,8 @@
+/**
+ * 在比赛过程中没有注意细节 自行设计的测试数据没有考虑到等于n的情况 导致没有AC
+ * 这种事情是需要踩坑 然后总结的 希望下次不要出现这种离谱的情况
+ * 2020年11月25日 小王 于N504
+ */
 #include <iostream>
 #include <vector>
 #include "string.h"
@@ -49,7 +54,7 @@ int main()
         int minElement = INF;
         int minElementPos = -1;
 
-        for(int i = 1; i < n; ++i)
+        for(int i = 1; i <= n; ++i)
         {
             if(occ[i] == 0)
                 continue;
@@ -61,7 +66,7 @@ int main()
             }
         }
 
-#if 1
+#if 0
         cout << "OCC" << endl;
         for(int i = 0; i < n; ++i)
         {
@@ -90,3 +95,4 @@ int main()
 
     return 0;
 }
+
