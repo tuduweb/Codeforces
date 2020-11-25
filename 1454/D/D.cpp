@@ -3,6 +3,8 @@
 #include "math.h"
 #include "string.h"
 
+#define DEBUG 1
+
 using namespace std;
 
 #define INF 1e9
@@ -14,6 +16,8 @@ int solve(ll n)
     int sqrtn = ceil(sqrtl(n));
     vector<int > result;
     int cnt[100000];
+
+    cout << "=========================================" << endl;
 
     for(int i = 2; i <= sqrtn; )
     {
@@ -28,15 +32,21 @@ int solve(ll n)
         }
     }
 
+    cnt[0] = sqrtn;
 
-    for(int i = 0; i < result.size(); ++i)
+#if DEBUG == 1
+    cout << "FACTOR:" << endl;
+
+    for(int i = 1; i < sqrtn; ++i)
     {
+        if(cnt[i] == 0)
+            continue;
         cout << i << ":" << cnt[i] << endl;
     }
+#endif
 
     //查找凹点
     int pos = 0;
-    cnt[0] = sqrtn;
     ll first = 0;
     int numCnt = 0;
 
@@ -62,20 +72,25 @@ int solve(ll n)
 
     cout <<"first:" << first << " min?:" << cnt[pos] << " num:" << pos << endl;
 
+#if DEBUG == 1
+    cout << "1 ";
     for(int i = 0; i < result.size(); ++i)
         cout << result[i] << " ";
-
+#endif
     cout << endl;
 
     cout << "RESULT!" << endl;
 
     if(first <= pos)
     {
-        cout << 
+        cout << result.size() << endl;
+        for(int i = 0; i < result.size(); ++i)
+            cout << result[i] << " ";
     }else{
         cout << 1 << endl << n << endl;
     }
 
+    cout << endl << endl << endl;
 
     return 0;
 }
