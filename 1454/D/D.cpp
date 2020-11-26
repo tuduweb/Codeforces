@@ -3,7 +3,7 @@
 #include "math.h"
 #include "string.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 using namespace std;
 
@@ -11,7 +11,7 @@ using namespace std;
 typedef long long ll;
 
 struct factor_pair{
-    int factor;
+    ll factor;
     int cnt;
 };
 
@@ -20,146 +20,82 @@ vector<int > result;
 
 int cnt[100000];
 
-int solve(ll n)
+void solve2(ll number)
 {
-    ll num = n;
-    int sqrtn = ceil(sqrtl(n));
-
+    int factor_limit = ceil(sqrtl(number));
+    //memset(cnt, 0, sizeof(cnt));
+    cnt[0] = cnt[1] = cnt[2] = 0;
 #if DEBUG == 1
-    cout << "=========================================" << endl;
+    cout << "=====================================" << endl;
 #endif
-    memset(cnt, 0, sizeof(cnt));
-    for(int i = 2; i <= sqrtn; )
+
+    // find factors
+    ll num_temp = number;
+    int factor = 2;
+    for(; factor <= factor_limit; )
     {
-        //整除
-        if(num % i == 0)
+        if(num_temp % factor == 0)
         {
-            result.push_back(i);
-            num = num / i;
-            cnt[i]++;
+            result.push_back(factor);
+            num_temp /= factor;
+            cnt[factor]++;
         }else{
-            i++;
-        }
-    }
-
-    cnt[0] = sqrtn;
-
-#if DEBUG == 1
-    cout << "FACTOR:" << endl;
-#endif
-
-    for(int i = 1; i < sqrtn; ++i)
-    {
-        if(cnt[i] == 0)
-            continue;
-#if DEBUG == 1
-        cout << i << ":" << cnt[i] << endl;
-#endif
-        factors.push_back({ i, cnt[i]});
-    }
-
-    //查找凹点
-    int pos = 0;
-    ll first = 0;
-    int numCnt = 0;
-
-    for(int i = 1; i < result.size(); ++i)
-    {
-        if(cnt[i] == 0)
-            continue;
-        else
-        {
-            if(first == 0)
-                first = pos;
-            if(pos == 0)
-                pos = i;
-            if((cnt[i] <= cnt[pos]))
-                pos = i;
-            else
+            cnt[factor + 1] = 0;
+            factor++;
+            if(num_temp < factor_limit)
                 break;
         }
     }
+    //处理边界
+    //if(num_temp > factor_limit)
 
-    if(first == 0)
-        first = n;
-
+    
 #if DEBUG == 1
-
-    cout << "1 ";
-    for(int i = 0; i < result.size(); ++i)
-        cout << result[i] << " ";
-
-    cout << endl;
-
-    cout << "@@@@@@@@@@@@@@@@" << endl;
-    cout <<"first:" << first << " min?:" << cnt[pos] << " num:" << pos << "rst.sz=" << result.size() << "fct.sz=" << factors.size() << endl;
-
+    cout << "FACTORS:" << endl;
 #endif
-
-    if(factors.size() > 1 || (factors.size() == 1 && factors[0].cnt > 1))
+    int max_cnt = 1;
+    for(int i = 2; i <= factor; ++i)
     {
-        cout << factors[0].cnt << endl;
-        // for(int i = 0; i < result.size(); ++i)
-        //     cout << result[i] << " ";
+        if(cnt[i] == 0)
+            continue;
 
-        ll multi = 1;
-        for(int i = 0; i < factors[0].cnt - 1; ++i)
-        {
-            multi = 1;
-#if DEBUG == 1
-            cout << " |- ";
-#endif
-            for(int j = 0; factors[j].factor <= pos && j < factors.size(); ++j)
-            {
-                if(factors[j].cnt + i >= factors[0].cnt)
-                {
-                    multi *= factors[j].factor; 
-                    //cout << factors[j].factor << " ";
-                }
-            }
-            cout << multi << " ";
-        }
-
-#if DEBUG == 1
-        cout << " |- ";
-#endif
-        //特殊处理最后一个,把剩下的都给整上
-        multi = 1;
-
-        for(int j = 0; j < factors.size(); ++j)
-        {
-
-            multi *= factors[j].factor;
-            //cout << factors[j].factor << " ";
-            if(factors[j].cnt > factors[0].cnt)
-            {
-                //继续输出
-                for(int k = factors[0].cnt; k < factors[j].cnt; ++k)
-                {
-                    multi *= factors[j].factor;
-
-                    //cout << factors[j].factor << " ";
-                }
-            }
-
-            // for(int k = factors[0].cnt - 1; k < factors[j].cnt; ++k)
-            // {
-            //     cout << factors[j].factor << " ";
-            // }
-        }
-        cout << multi << endl;
-
-    }else{
-        cout << 1 << endl << n << endl;
+        if(cnt[i] > max_cnt)
+            max_cnt = cnt[i];
+        //把统计数据加入到factors数据结构向量中
+        factors.push_back({i, cnt[i]});
     }
 
+    if(factors.size() && num_temp > factors.back().factor || factors.size() == 0)
+        factors.push_back({num_temp, 1});
+
 #if DEBUG == 1
-    cout << endl << endl << endl;
+    for(int i = 0; i < factors.size(); ++i)
+    {
+        cout << "[" << factors[i].factor << "] " << factors[i].cnt << endl;
+    }
 #endif
 
+    //输出结果
+    cout << max_cnt << endl;
+
+    for(int output_pos = 0; output_pos < max_cnt; ++output_pos)
+    {
+        ll output = 1;
+        //cout << "[o " << output_pos << "] ";
+        for(int fact_pos = 0; fact_pos < factors.size(); ++fact_pos)
+        {
+            if(factors[fact_pos].cnt + output_pos >= max_cnt)
+            {
+                //cout << factors[fact_pos].factor << " ";
+                output *= factors[fact_pos].factor;
+            }
+        }
+        cout << output << " ";
+    }
+    cout << endl;
+    //cout << endl << endl << endl;
     factors.clear();
     result.clear();
-    return 0;
 }
 
 
@@ -173,7 +109,7 @@ int main()
     {
         ll n;
         cin >> n;
-        solve(n);
+        solve2(n);
     }
 
     return 0;
@@ -186,4 +122,5 @@ int main()
 9876543210
 
 没有考虑 factor2 = 1的情况
+没有考虑 剩余的数字大于sqrt的情况
 */
