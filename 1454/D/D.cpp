@@ -20,6 +20,9 @@ vector<int > result;
 
 int cnt[100000];
 
+int flag = 0;
+int caseK = 0;
+
 void solve2(ll number)
 {
     int factor_limit = ceil(sqrtl(number));
@@ -28,7 +31,7 @@ void solve2(ll number)
 #if DEBUG == 1
     cout << "=====================================" << endl;
 #endif
-
+    //这里改为二维数组,才能更方便的得到答案..不然全是bug
     // find factors
     ll num_temp = number;
     int factor = 2;
@@ -42,10 +45,18 @@ void solve2(ll number)
         }else{
             cnt[factor + 1] = 0;
             factor++;
-            if(num_temp < factor_limit)
-                break;
+            /* 下面这个式子就是错误的,导致了错误 */
+            // if(num_temp < factor_limit)
+            //     break;
         }
     }
+
+    // if(num_temp > 1)
+    // {
+    //     result.push_back(num_temp);
+        
+    // }
+
     //处理边界
     //if(num_temp > factor_limit)
 
@@ -67,6 +78,10 @@ void solve2(ll number)
 
     if(factors.size() && num_temp > factors.back().factor || factors.size() == 0)
         factors.push_back({num_temp, 1});
+    // for(int i = 0; i < result.size(); ++i)
+    // {
+    //     factors.push_back({ result[i], cnt[result[i]]});
+    // }
 
 #if DEBUG == 1
     for(int i = 0; i < factors.size(); ++i)
@@ -75,9 +90,10 @@ void solve2(ll number)
     }
 #endif
 
+
     //输出结果
     cout << max_cnt << endl;
-
+    //[check]这里的思路是对的..但是从max_cnt下降计算..更好理解
     for(int output_pos = 0; output_pos < max_cnt; ++output_pos)
     {
         ll output = 1;
@@ -93,6 +109,7 @@ void solve2(ll number)
         cout << output << " ";
     }
     cout << endl;
+
     //cout << endl << endl << endl;
     factors.clear();
     result.clear();
@@ -109,6 +126,12 @@ int main()
     {
         ll n;
         cin >> n;
+
+        // if(n == 140019)
+        // {
+        //     flag = 1;
+        // }
+
         solve2(n);
     }
 
