@@ -38,7 +38,7 @@ int main()
         
         vector<ll > v(n);
 
-        ll sum = 0, minSum = 1e19;
+        ll sum = 0;
 
         for(int i = 0; i < n; ++i)
         {
@@ -55,20 +55,27 @@ int main()
             //cout << v[i] << " ";
             sum += MyAbs(v[i]);
         }
+        //cout << endl << "sum = " << sum << endl;
 
         //cout << endl;
+
+        //新增开始的特殊情况,这时候左边没有,只有右边。       
+        ll minSum = sum - MyAbs(v[0]);
 
         // 0 -> n-2 (n - 1 items)
         //change one item will change left and right item(or only one(left or right))
         for(int i = 0; i < n - 1; ++i)
         {
             ll temp = sum;
-            //set v[i] -> 0
-            if(i != 0)
-            {
-                temp -= MyAbs(v[i]);
-                //no left
-            }
+            // //set v[i] -> 0
+            // if(i != 0)
+            // {
+            //     temp -= MyAbs(v[i]);
+            //     //no left
+            // }
+
+            temp -= MyAbs(v[i]);
+
             ll tempNum = v[i + 1];
             if(i != n - 2)
             {
@@ -78,11 +85,12 @@ int main()
                 //no right
                 temp = temp - MyAbs(v[i+1]) + MyAbs(tempNum + v[i]);
             }
+            //cout << "temp " << temp << endl;
 
             if(temp < minSum) minSum = temp;
         }
-        cout << minSum;
-        cout << endl << endl;
+        cout << minSum << endl;
+        //cout << endl << endl;
         //solve(v);
     }
     return 0;
