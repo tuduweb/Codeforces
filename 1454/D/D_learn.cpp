@@ -11,6 +11,7 @@ int32_t main() {
 	cin.tie(0);
 	int t;cin >> t;
 	while(t--) {
+        // cout << "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"<<endl;
 		ll n;cin >> n;
 		ll ans = 1;
 		vector<array<ll, 2>> f;
@@ -22,13 +23,29 @@ int32_t main() {
 		}
 		if(n > 1)
 			f.push_back({n, 1});
+        // for(auto &[x, y] : f)
+        // {
+        //     cout << "[" << x << "]" << y << endl; 
+        // }
 		cout << ans << '\n';
         //最多的因式打底,作为最开始的项;然后减小循环
-		for(int i = ans; i; i--) {
-			ll cur = 1;
-			for(auto &[x, y] : f) if(y == i) y--, cur *= x;
-			cout << cur << " ";
-		}
+		// for(int i = ans; i; i--) {
+		// 	ll cur = 1;
+		// 	for(auto &[x, y] : f) if(y == i) y--, cur *= x;//y--的操作
+		// 	cout << cur << " ";
+		// }
+
+        for(int i = 0; i < ans; ++i)
+        {
+            ll cur = 1;
+            for(int pos = 0; pos < f.size(); ++pos)
+            {
+                if(f[pos][1] + i >= ans)
+                    cur *= f[pos][0];
+            }
+            cout << cur << " ";
+        }
+
 		cout << '\n';
 	}
 }
