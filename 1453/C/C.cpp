@@ -27,7 +27,7 @@ void solve_line(int n, vector<struct point >* v)
     {
         if(v[digit].size() < 2)
         {
-            result[digit] = 0;
+            ans[digit] = 0;
             continue;
         }
 
